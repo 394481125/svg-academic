@@ -126,43 +126,6 @@ class JournalManager:
         print(f"  - 主题: {use_theme} | 尺寸: {use_size} ({width}x{height}英寸)")
         return width, height
 
-    def add_custom_journal(self, journal_name, colors, theme_config, width, height,
-                           palette_name=None, theme_name=None, size_name=None):
-        """
-        一键添加自定义期刊配置（合并调色板、主题、尺寸和期刊注册）
-
-        参数:
-            journal_name: 自定义期刊名称
-            colors: 调色板颜色列表
-            theme_config: 主题配置字典
-            width: 图表宽度（英寸）
-            height: 图表高度（英寸）
-            palette_name: 可选，自定义调色板名称（默认使用 journal_name + "_palette"）
-            theme_name: 可选，自定义主题名称（默认使用 journal_name + "_theme"）
-            size_name: 可选，自定义尺寸名称（默认使用 journal_name + "_size"）
-        """
-        # 自动生成名称（如果未指定）
-        palette_name = palette_name or f"{journal_name}_palette"
-        theme_name = theme_name or f"{journal_name}_theme"
-        size_name = size_name or f"{journal_name}_size"
-
-        # 1. 添加自定义调色板
-        self._theme_manager.color_manager.add_custom_palette(palette_name, colors)
-
-        # 2. 创建自定义主题
-        self._theme_manager.add_custom_theme(theme_name, palette_name, theme_config)
-
-        # 3. 定义自定义尺寸
-        self._size_manager.add_custom_size(size_name, width, height)
-
-        # 4. 注册为期刊配置
-        self.journal_presets[journal_name] = {
-            "theme": theme_name,
-            "size": size_name
-        }
-
-        print(f"自定义期刊 '{journal_name}' 已创建并注册")
-
 
 # --- 实例化所有管理器，供项目内其他模块导入使用 ---
 color_manager = ColorManager()
