@@ -1,5 +1,7 @@
 # svg_academic/plotter.py
 import matplotlib.pyplot as plt
+import numpy as np
+
 from .managers import journal_manager, size_manager, theme_manager
 from .config import save_fig
 from .utils import AcademicAnnotation, optimize_academic_ax, set_academic_labels, format_axis, add_panel_label
@@ -52,10 +54,10 @@ class AcademicPlot:
         """
         if self.journal:
             width, height = journal_manager.load_journal_config(
-                self.journal, theme=self.theme, size=self.size, transparent=self.transparent
+                self.journal, transparent=self.transparent
             )
         else:
-            theme_manager.apply_theme(self.theme, transparent=self.transparent)
+            # theme_manager.apply_theme(self.theme, transparent=self.transparent)
             width, height = size_manager.get_size(self.size)
 
         # --- FIX START ---

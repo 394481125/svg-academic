@@ -110,14 +110,15 @@ class JournalManager:
             "springer": {"theme": "nature", "size": "springer_single"},
         }
 
-    def load_journal_config(self, journal_name, theme=None, size=None, **kwargs):
-        """一键加载期刊配置。"""
+    def load_journal_config(self, journal_name, **kwargs):
+        """一键加载期刊配置（使用期刊预设的主题和尺寸）。"""
         if journal_name not in self.journal_presets:
             raise ValueError(f"期刊预设 '{journal_name}' 不存在！可选：{list(self.journal_presets.keys())}")
 
+        # 直接使用期刊预设中定义的theme和size，不允许外部传入覆盖
         defaults = self.journal_presets[journal_name]
-        use_theme = theme or defaults["theme"]
-        use_size = size or defaults["size"]
+        use_theme = defaults["theme"]
+        use_size = defaults["size"]
 
         self._theme_manager.apply_theme(use_theme, **kwargs)
         width, height = self._size_manager.get_size(use_size)

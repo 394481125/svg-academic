@@ -1,14 +1,29 @@
 import svg_academic as sat
+import numpy as np
 
-# 准备数据：{组名: (均值, 误差)}
-bar_data = {'Group A': (1.5, 0.2), 'Group B': (2.8, 0.4), 'Group C': (2.1, 0.3)}
-
-# 调用模板绘图（自动应用期刊样式）
-sat.plot_bar_with_error(
-    bar_data,
-    x_label="A",
-    y_label="B",
-    title="C",
-    journal="nature",  # 应用Nature期刊格式
-    save_path="bar_plot_with_error"  # 保存路径（自动生成三种格式）
+# 1. 一键创建并注册自定义期刊
+sat.journal_manager.add_custom_journal(
+    journal_name="our_journal",  # 自定义期刊名称
+    colors=['#FFC107', '#26A69A', '#EF5350'],  # 专属调色板
+    theme_config={  # 主题样式配置
+        "axes.linewidth": 1.0,
+        "grid.alpha": 0.2,
+        "lines.markersize": 6
+    },
+    width=5.0,  # 图表宽度（英寸）
+    height=4.5  # 图表高度（英寸）
 )
+
+# 2. 使用自定义期刊绘图
+x = np.linspace(0, 15, 200)
+y1 = np.sin(x) * np.exp(-0.1 * x)
+y2 = np.cos(x) * np.exp(-0.1 * x)
+
+with sat.plotter.use_journal('our_journal').create_fig() as p:
+    p.ax.plot(x, y1, label="A", linewidth=2.5)  # 自动使用自定义配色
+    p.ax.plot(x, y2, label="B", linewidth=2.5, linestyle="--")
+
+    p.set_labels(x_label="T", y_label="A", title="Title")
+    p.optimize_ax(hide_spines=["top", "right"])
+    p.ax.legend()
+    p.save_all_formats("custom_journal_demo")
