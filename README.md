@@ -12,13 +12,7 @@ svg-academic 是一个专为科研人员设计的学术图表绘制工具包，�
 - **学术优化细节**：自动优化坐标轴、字体及布局，符合学术出版规范
 
 
-## 安装指南
-
-```bash
-clone svg-academic
-```
-
-额外依赖（部分高级图表需要）：
+依赖（部分高级图表需要）：
 ```bash
 pip install scipy pandas seaborn adjustText
 ```
@@ -26,26 +20,41 @@ pip install scipy pandas seaborn adjustText
 
 ## 快速开始
 
-### 基础示例：带误差棒的柱状图（模板绘图）
+### 基础示例：自定义曲线图（仅适用svg、png、pdf保存功能）
 
 ```python
 import svg_academic as sat
+import numpy as np
+import matplotlib.pyplot as plt
 
-# 准备数据：{组名: (均值, 误差)}
-bar_data = {'Group A': (1.5, 0.2), 'Group B': (2.8, 0.4), 'Group C': (2.1, 0.3)}
+# 1. 准备示例数据
+x = np.linspace(0, 15, 200)
+y1 = np.sin(x) * np.exp(-0.1 * x)  # 衰减正弦曲线1
+y2 = np.cos(x) * np.exp(-0.1 * x)  # 衰减正弦曲线2
 
-# 绘制图表
-sat.plot_bar_with_error(
-    bar_data,
-    x_label="实验组",
-    y_label="测量值",
-    title="带误差棒的柱状图示例",
-    journal="nature",  # 应用Nature期刊格式
-    save_path="bar_plot"  # 保存为 bar_plot.svg/png/pdf
-)
+# 2. 完全自定义绘图配置（不使用内置期刊预设）
+with sat.plotter.create_fig() as p:  # 创建画布
+    p.ax.plot(x, y1, label="A", color="#2ECC71", linewidth=2.5)
+    p.ax.plot(x, y2, label="B", color="#3498DB", linewidth=2.5, linestyle="--")
+
+    # 自定义图表元素
+    p.set_labels(
+        x_label="T",
+        y_label="A",
+        title="Sample"
+    )
+    p.optimize_ax(hide_spines=["top", "right"])  # 隐藏顶部和右侧边框
+    p.ax.legend(frameon=True, loc="upper right")  # 显示图例
+    p.ax.grid(alpha=0.3)  # 添加网格线
+
+    # 3. 保存为SVG、PNG、PDF三种格式
+    # 注意：save_all_formats会自动处理三种格式，无需额外配置
+    p.save_all_formats("fully_custom_line_plot")
+
 ```
 
-### 基础示例：自定义折线图（使用内置期刊配置）
+
+### 基础示例：自定义折线图（使用内置期刊配置+保存功能）
 
 ```python
 import svg_academic as sat
@@ -78,6 +87,25 @@ with sat.plotter.use_journal("nature")  # 指定期刊（自动应用其配色�
     # 3. 保存图表（自动生成SVG/PDF/PNG三种格式）
     p.save_all_formats("custom_line_plot")
 
+```
+
+### 基础示例：带误差棒的柱状图（使用内置模板绘图）
+
+```python
+import svg_academic as sat
+
+# 准备数据：{组名: (均值, 误差)}
+bar_data = {'Group A': (1.5, 0.2), 'Group B': (2.8, 0.4), 'Group C': (2.1, 0.3)}
+
+# 绘制图表
+sat.plot_bar_with_error(
+    bar_data,
+    x_label="实验组",
+    y_label="测量值",
+    title="带误差棒的柱状图示例",
+    journal="nature",  # 应用Nature期刊格式
+    save_path="bar_plot"  # 保存为 bar_plot.svg/png/pdf
+)
 ```
 
 
