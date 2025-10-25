@@ -15,7 +15,7 @@ svg-academic 是一个专为科研人员设计的学术图表绘制工具包，�
 ## 安装指南
 
 ```bash
-pip install svg-academic
+clone svg-academic
 ```
 
 额外依赖（部分高级图表需要）：
