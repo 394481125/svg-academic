@@ -2,7 +2,6 @@
 
 svg-academic 是一个专为科研人员设计的学术图表绘制工具包，支持多种期刊格式适配、自定义样式配置及多格式导出，帮助你快速生成符合学术出版标准的高质量图表。
 
-
 ## 核心功能
 
 - **丰富的图表模板**：涵盖基础统计图、高级学术图表及机器学习/临床专用图表
@@ -11,18 +10,38 @@ svg-academic 是一个专为科研人员设计的学术图表绘制工具包，�
 - **多格式导出**：一键保存为 SVG（AI 兼容）、PDF、PNG 格式
 - **学术优化细节**：自动优化坐标轴、字体及布局，符合学术出版规范
 
+## 安装指南
 
-## 依赖安装
-部分高级图表需要额外依赖，可通过以下命令安装：
 ```bash
-pip install scipy pandas seaborn adjustText
+pip install svg-academic
 ```
-
 
 ## 快速开始
 
+### 一键使用内置期刊配置
+
+```python
+import svg_academic as sat
+import numpy as np
+
+# 生成示例数据
+x = np.linspace(0, 15, 200)
+y1 = np.sin(x) * np.exp(-0.1 * x)
+y2 = np.cos(x) * np.exp(-0.1 * x)
+
+# 使用Nature期刊格式绘图
+with sat.plotter.use_journal('nature').create_fig() as p:
+    p.ax.plot(x, y1, label="Series A", linewidth=2.5)
+    p.ax.plot(x, y2, label="Series B", linewidth=2.5, linestyle="--")
+    
+    p.set_labels(x_label="Time (s)", y_label="Amplitude", title="Damped Oscillations")
+    p.optimize_ax(hide_spines=["top", "right"])
+    p.ax.legend()
+    p.save_all_formats("nature_demo")  # 自动保存为SVG、PDF、PNG
+```
+
 ### 一键创建自定义期刊配置
-快速整合调色板、主题和尺寸，简化自定义流程：
+
 ```python
 import svg_academic as sat
 import numpy as np
@@ -55,100 +74,23 @@ with sat.plotter.use_journal('our_journal').create_fig() as p:
     p.save_all_formats("custom_journal_demo")
 ```
 
-### 基础示例：完全自定义绘图（仅使用保存为SVG、PNG、PDF三种格式功能）
-不依赖内置期刊配置，手动设置所有样式：
-```python
-import svg_academic as sat
-import numpy as np
-
-# 1. 准备示例数据
-x = np.linspace(0, 15, 200)
-y1 = np.sin(x) * np.exp(-0.1 * x)  # 衰减正弦曲线1
-y2 = np.cos(x) * np.exp(-0.1 * x)  # 衰减正弦曲线2
-
-# 2. 创建画布并绘图
-with sat.plotter.create_fig() as p:  # 初始化画布
-    p.ax.plot(x, y1, label="A", color="#2ECC71", linewidth=2.5)
-    p.ax.plot(x, y2, label="B", color="#3498DB", linewidth=2.5, linestyle="--")
-    
-    # 自定义图表元素
-    p.set_labels(x_label="T", y_label="A", title="Sample")  # 设置标签
-    p.optimize_ax(hide_spines=["top", "right"])  # 隐藏顶部和右侧边框
-    p.ax.legend(frameon=True, loc="upper right")  # 显示图例
-    p.ax.grid(alpha=0.3)  # 添加网格线
-    
-    # 3. 保存为SVG、PNG、PDF三种格式
-    p.save_all_formats("fully_custom_line_plot")  # 生成: .svg + .png + .pdf
-```
-
-
-### 基础示例：使用内置期刊配置
-直接应用顶级期刊的预设样式（自动适配配色、尺寸和格式）：
-```python
-import svg_academic as sat
-import numpy as np
-
-# 1. 准备示例数据
-x = np.linspace(0, 10, 100)
-y1 = np.sin(x)
-y2 = np.cos(x)
-y3 = np.sin(x) + np.cos(x)
-
-# 2. 应用期刊配置绘图
-with sat.plotter.use_journal("nature").create_fig() as p:     #  指定期刊（自动加载其样式） 创建画布
-                
-    p.ax.plot(x, y1, label="A", color="#2ECC71", linewidth=2.5)
-    p.ax.plot(x, y2, label="B", color="#3498DB", linewidth=2.5, linestyle="--")
-    
-    # 自定义图表元素
-    p.set_labels(x_label="T", y_label="A", title="Sample")  # 设置标签
-    p.optimize_ax(hide_spines=["top", "right"])  # 隐藏顶部和右侧边框
-    p.ax.legend(frameon=True, loc="upper right")  # 显示图例
-    p.ax.grid(alpha=0.3)  # 添加网格线
-    
-    # 3. 保存为SVG、PNG、PDF三种格式
-    p.save_all_formats("fully_custom_line_plot")  # 生成: .svg + .png + .pdf
-```
-
-
-### 基础示例：使用内置图表模板
-通过模板快速绘制专业图表（以带误差棒的柱状图为例）：
-```python
-import svg_academic as sat
-
-# 准备数据：{组名: (均值, 误差)}
-bar_data = {'Group A': (1.5, 0.2), 'Group B': (2.8, 0.4), 'Group C': (2.1, 0.3)}
-
-# 调用模板绘图（自动应用期刊样式）
-sat.plot_bar_with_error(
-    bar_data,
-    x_label="A",
-    y_label="B",
-    title="C",
-    journal="nature",  # 应用Nature期刊格式
-    save_path="bar_plot_with_error"  # 保存路径（自动生成三种格式）
-)
-```
-
-
 ## 内置期刊配置详情
+
 工具包内置5种顶级期刊的预设配置，整合了专属的尺寸、配色和样式：
 
-| 期刊名称   | 关联主题   | 关联尺寸          | 尺寸（宽×高，英寸） | 配色方案（HEX）                                                                 | 主题特殊配置                                                                 |
-|------------|------------|-------------------|---------------------|---------------------------------------------------------------------------------|------------------------------------------------------------------------------|
-| `nature`   | `nature`   | `nature_single`   | 3.5 × 2.6           | `#0066CC`, `#DC3912`, `#FF9900`, `#109618`, `#990099`                           | 坐标轴线条宽度：0.8px；网格透明度：0.3                                        |
-| `science`  | `science`  | `science_single`  | 2.3 × 2.0           | `#E63946`, `#F4A261`, `#2A9D8F`, `#264653`, `#A8DADC`                           | 坐标轴线条宽度：1.0px；网格透明度：0.2                                        |
-| `ieee`     | `ieee`     | `ieee_double`     | 7.16 × 4.0          | `#007ACC`, `#D9534F`, `#5CB85C`, `#F0AD4E`, `#5BC0DE`                           | 线条宽度：2.0px；网格透明度：0.4                                              |
-| `elsevier` | `simple`   | `elsevier_single` | 3.54 × 2.36         | `#222222`, `#666666`, `#999999`, `#CCCCCC`, `#EEEEEE`（灰度）                    | 坐标轴线条宽度：0.6px；网格透明度：0.5                                        |
-| `springer` | `nature`   | `springer_single` | 3.3 × 2.5           | 同`nature`配色（`#0066CC`, `#DC3912`等）                                        | 同`nature`主题配置（坐标轴线条宽度0.8px，网格透明度0.3）                      |
-
+| 期刊名称 | 关联主题 | 关联尺寸 | 尺寸（宽×高，英寸） | 配色方案（HEX） | 主题特殊配置 |
+|--|--|--|--|--|--|
+| `nature` | `nature` | `nature_single` | 3.5 × 2.6 | `#0066CC`, `#DC3912`, `#FF9900`, `#109618`, `#990099` | 坐标轴线条宽度：0.8px；网格透明度：0.3 |
+| `science` | `science` | `science_single` | 2.3 × 2.0 | `#E63946`, `#F4A261`, `#2A9D8F`, `#264653`, `#A8DADC` | 坐标轴线条宽度：1.0px；网格透明度：0.2 |
+| `ieee` | `ieee` | `ieee_double` | 7.16 × 4.0 | `#007ACC`, `#D9534F`, `#5CB85C`, `#F0AD4E`, `#5BC0DE` | 线条宽度：2.0px；网格透明度：0.4 |
+| `elsevier` | `simple` | `elsevier_single` | 3.54 × 2.36 | `#222222`, `#666666`, `#999999`, `#CCCCCC`, `#EEEEEE`（灰度） | 坐标轴线条宽度：0.6px；网格透明度：0.5 |
+| `springer` | `nature` | `springer_single` | 3.3 × 2.5 | 同`nature`配色（`#0066CC`, `#DC3912`等） | 同`nature`主题配置（坐标轴线条宽度0.8px，网格透明度0.3） |
 
 ## 支持的图表类型
 
 ### 基础模板
 - 带误差棒的柱状图 (`plot_bar_with_error`)
 - 带回归线的散点图 (`plot_scatter_with_regression`)
-
 
 ### 中级模板
 - 学术风格热图 (`plot_heatmap`)
@@ -161,7 +103,6 @@ sat.plot_bar_with_error(
 - 气泡图（通过气泡大小展示第三维度数据）(`plot_bubble`)
 - 带阴影区间的线图（展示误差范围）(`plot_line_with_shaded`)
 - 雷达图（多指标数据对比）(`plot_radar_chart`)
-
 
 ### 高级学术图表
 - 火山图（常用于差异表达分析）(`plot_volcano`)
@@ -189,35 +130,22 @@ sat.plot_bar_with_error(
 - 密度热图（二维数据分布密度）(`plot_density_heatmap`)
 - 多面板组合图（子图排版工具）(`create_multi_panel_figure`)
 
-
 ### 机器学习与统计图表
-- ROC 曲线（分类模型性能评估）(`plot_roc_curve`)
-- 精确率-召回率曲线（不平衡数据评估）(`plot_precision_recall_curve`)
-- 混淆矩阵（分类结果可视化）(`plot_confusion_matrix`)
-- 特征重要性图（模型解释性）(`plot_feature_importance`)
-- 树状图（聚类结果展示）(`plot_dendrogram`)
-- 生存曲线（生存分析可视化）(`plot_survival_curve`)
+- ROC曲线 (`plot_roc_curve`)
+- 精确率-召回率曲线 (`plot_precision_recall_curve`)
+- 混淆矩阵 (`plot_confusion_matrix`)
+- 特征重要性图 (`plot_feature_importance`)
+- 树状图 (`plot_dendrogram`)
 
+### 临床与流行病学图表
+- 生存曲线 (`plot_survival_curve`)
 
-
-## 扩展：自定义中间对象名称
-如需指定调色板、主题或尺寸的名称，可通过参数自定义：
-```python
-sat.journal_manager.add_custom_journal(
-    journal_name="our_journal",
-    palette_name="lab_colors",  # 自定义调色板名称
-    theme_name="lab_style",     # 自定义主题名称
-    size_name="lab_6x45",       # 自定义尺寸名称
-    colors=['#1E88E5', '#FFC107'],  # 其他参数同上
-    theme_config={"axes.linewidth": 1.0},
-    width=6.0,
-    height=4.5
-)
-```
-
+## 高级用法
 
 ### 分步自定义期刊配置（详细版）
+
 如需更精细的控制，可分步创建配置：
+
 ```python
 # 1. 添加自定义调色板
 sat.color_manager.add_custom_palette(
@@ -257,9 +185,10 @@ sat.plot_scatter_with_regression(
 )
 ```
 
-
 ### 临时覆盖配置
+
 绘图时临时修改期刊的主题或尺寸：
+
 ```python
 with sat.plotter.use_journal("nature") \
         .use_theme("dark_mode")  # 临时替换为暗色主题
@@ -270,69 +199,41 @@ with sat.plotter.use_journal("nature") \
     p.save_all_formats("temporary_override_demo")
 ```
 
+## API 参考
 
-## 高级用法
+### JournalManager 类
 
-### 自定义绘图方法
-基于内置工具链扩展专属图表：
 ```python
-import numpy as np
-
-def plot_custom_chart(data, journal="nature", save_path=None):
-    # 加载期刊配置并创建画布
-    with sat.plotter.use_journal(journal).create_fig() as p:
-        ax = p.ax  # 获取坐标轴对象
+class JournalManager:
+    def __init__(self, theme_manager, size_manager):
+        # 初始化期刊管理器
         
-        # 自定义绘图逻辑（示例：带误差线的散点）
-        x = np.arange(len(data))
-        y = [item[0] for item in data]
-        y_err = [item[1] for item in data]
-        ax.errorbar(x, y, yerr=y_err, fmt='o', capsize=5)
+    def load_journal_config(self, journal_name, **kwargs):
+        """加载指定期刊的配置，返回宽度和高度"""
         
-        # 学术优化
-        p.set_labels("X轴", "Y轴", "自定义图表")
-        p.optimize_ax(hide_spines=["top"])  # 隐藏顶部边框
-        
-        # 保存图表
-        if save_path:
-            p.save_all_formats(save_path)
-
-# 使用自定义方法
-custom_data = [(2.3, 0.4), (3.1, 0.3), (1.8, 0.5)]
-plot_custom_chart(custom_data, journal="science", save_path="custom_chart_demo")
+    def add_custom_journal(self, journal_name, colors, theme_config, width, height,
+                          palette_name=None, theme_name=None, size_name=None):
+        """一键添加自定义期刊配置"""
 ```
 
+### 图表保存函数
 
-### 坐标轴格式化
-使用 `format_axis` 函数美化刻度显示：
 ```python
-from svg_academic.utils import format_axis
-
-with sat.plotter.create_fig() as p:
-    p.ax.plot([1, 2, 3], [1000, 2000, 3000])
-    format_axis(p.ax, axis='y', style='sci')  # Y轴使用科学计数法
-    format_axis(p.ax, axis='x', style='percent')  # X轴使用百分比格式
-    p.save_all_formats("axis_format_demo")
+def save_fig(fig, save_path="output.svg", pad_inches=0.1, transparent=None, dpi=None, close_fig=True):
+    """保存图表为指定格式，支持SVG、PDF、PNG"""
 ```
 
+### 坐标轴格式化工具
 
-## 全局配置
-设置全局默认参数（字体、分辨率等）：
 ```python
-sat.set_global_defaults(
-    base_fontsize=12,  # 全局字体大小
-    dpi=600,           # 导出分辨率（默认300dpi）
-    transparent=True   # 透明背景（默认不透明）
-)
+def format_axis(ax, axis='y', style='sci', scilimits=(0, 0)):
+    """格式化坐标轴刻度，支持科学计数法、百分比等格式"""
 ```
 
+## 许可证
 
-## 输出格式
-所有图表默认支持三种格式导出，无需额外配置：
-- **SVG**：矢量图，兼容 Adobe Illustrator 等工具编辑
-- **PDF**：适合学术期刊出版
-- **PNG**：300dpi 位图，适合演示文稿
+本项目采用 MIT 许可证，详情参见 LICENSE 文件。
 
-指定 `save_path="filename"` 后，工具会自动生成 `filename.svg`、`filename.pdf` 和 `filename.png`。
+## 贡献指南
 
-> 注：保存函数支持通过 `close_fig` 参数控制是否关闭画布（默认关闭），批量生成图表时可设置 `close_fig=False` 提升效率。
+欢迎通过 GitHub 提交 Issue 或 Pull Request 参与项目开发。提交前请确保代码通过所有测试，并遵循项目的代码风格规范。

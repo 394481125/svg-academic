@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "svg-academic"
+version = "0.1.0"
+authors = [
+  { name = "394481125", email = "394481125@qq.com" }
+]
+description = "学术图表绘制工具包，生成与Adobe Illustrator兼容的SVG图表，支持多种期刊格式"
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.8"
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Intended Audience :: Science/Research",
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.8",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Topic :: Scientific/Engineering :: Visualization"
+]
+
+[project.optional-dependencies]
+full = [
+  "scipy>=1.7.0",  # 用于回归线计算等统计功能
+  "adjustText>=0.8",  # 用于优化图表标签位置
+]
