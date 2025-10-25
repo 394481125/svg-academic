@@ -26,7 +26,7 @@ pip install scipy pandas seaborn adjustText
 
 ## 快速开始
 
-### 基础示例：带误差棒的柱状图
+### 基础示例：带误差棒的柱状图（模板绘图）
 
 ```python
 import svg_academic as sat
@@ -43,6 +43,41 @@ sat.plot_bar_with_error(
     journal="nature",  # 应用Nature期刊格式
     save_path="bar_plot"  # 保存为 bar_plot.svg/png/pdf
 )
+```
+
+### 基础示例：自定义折线图（使用内置期刊配置）
+
+```python
+import svg_academic as sat
+import numpy as np
+
+# 1. 准备示例数据
+x = np.linspace(0, 10, 100)
+y1 = np.sin(x)
+y2 = np.cos(x)
+y3 = np.sin(x) + np.cos(x)
+
+# 2. 使用期刊配置绘制线图
+with sat.plotter.use_journal("nature")  # 指定期刊（自动应用其配色和尺寸）
+                .create_fig() as p:     # 创建画布
+                
+    # 绘制多条线（自动使用期刊的配色方案）
+    p.ax.plot(x, y1, label="Sin(x)", linewidth=2)
+    p.ax.plot(x, y2, label="Cos(x)", linewidth=2)
+    p.ax.plot(x, y3, label="Sin(x)+Cos(x)", linewidth=2)
+    
+    # 学术优化设置
+    p.set_labels(
+        x_label="X轴 (单位: 弧度)",
+        y_label="Y轴 (值)",
+        title="基于Nature期刊样式的线图示例"
+    )
+    p.optimize_ax()  # 优化坐标轴（隐藏顶部/右侧边框、添加网格等）
+    p.ax.legend()    # 显示图例（使用期刊样式的字体和颜色）
+    
+    # 3. 保存图表（自动生成SVG/PDF/PNG三种格式）
+    p.save_all_formats("custom_line_plot")
+
 ```
 
 
